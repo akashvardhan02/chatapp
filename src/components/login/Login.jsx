@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, db } from "../../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
 import upload from "../../lib/upload";
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
     url: "",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState();
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -30,25 +30,32 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.target);
-
     const { username, email, password } = Object.fromEntries(formData);
 
     // VALIDATE INPUTS
-    if (!username || !email || !password)
-      return toast.warn("Please enter inputs!");
-    if (!avatar.file) return toast.warn("Please upload an avatar!");
+    if (!username || !email || !password) {
+      toast.warn("Please enter inputs!");
+      setLoading(false);
+      return;
+    }
+    if (!avatar.file) {
+      toast.warn("Please upload an avatar!");
+      setLoading(false);
+      return;
+    }
 
     // VALIDATE UNIQUE USERNAME
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("username", "==", username));
     const querySnapshot = await getDocs(q);
     if (!querySnapshot.empty) {
-      return toast.warn("Select another username");
+      toast.warn("Select another username");
+      setLoading(false);
+      return;
     }
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
-
       const imgUrl = await upload(avatar.file);
 
       await setDoc(doc(db, "users", res.user.uid), {
@@ -75,7 +82,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const formData = new FormData(e.target);
     const { email, password } = Object.fromEntries(formData);
 

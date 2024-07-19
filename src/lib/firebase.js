@@ -1,19 +1,23 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "reactchat-8953e.firebaseapp.com",
-  projectId: "reactchat-8953e",
-  storageBucket: "reactchat-8953e.appspot.com",
-  messagingSenderId: "989490756392",
-  appId: "1:989490756392:web:9e54e92c7b39c531b82e1d"
+  apiKey: "AIzaSyBGphNYGLdPl99NJbvkipoZl-Nb8iUnIk8",
+  authDomain: "reactchat-1a08c.firebaseapp.com",
+  projectId: "reactchat-1a08c",
+  storageBucket: "reactchat-1a08c.appspot.com",
+  messagingSenderId: "125791226745",
+  appId: "1:125791226745:web:85c7105a8785464e5fbda8"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-export const auth = getAuth()
-export const db = getFirestore()
-export const storage = getStorage()
+export { auth, db, storage };
